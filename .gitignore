@@ -1,0 +1,5 @@
+.vscode/
+node_modules/
+
+cumsocket.code-workspace
+package-lock.json

@@ -1,0 +1,26 @@
+{
+  "name": "cumsocket",
+  "version": "0.1.0",
+  "description": "Basic discord selfbot",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc && clear && echo 'Build complete!'"
+  },
+  "author": "0x7030676e31",
+  "license": "ISC",
+  "dependencies": {
+    "node-fetch": "^3.3.0",
+    "pg": "^8.8.0",
+    "ws": "^8.11.0"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.6.2",
+    "@types/pg": "^8.6.5",
+    "@types/ws": "^8.5.3"
+  }
+}
