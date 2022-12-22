@@ -1,4 +1,5 @@
 import { ApiModules } from "../api/index.js";
+import DCClient from "../client/index.js";
 import DBStorage from "./dbstorage.js";
 import Socket from "./socket.js";
 import pg from "pg";
@@ -18,6 +19,7 @@ export default class Client extends Socket {
     private _userReady;
     private readonly _api;
     private readonly _storage?;
+    readonly client: DCClient;
     /**
       Initializes a new connection with discord using the provided authorization token.
       @param opt.authorization The authorization token to use.
@@ -61,6 +63,10 @@ export default class Client extends Socket {
      * @returns The storage instance.
     */
     get storage(): DBStorage | null;
+    /**
+     * Returns the api object with all available api modules.
+     * @returns The api object.
+    */
     get api(): ApiModules;
     /**
      * Returns the value of the environment variable with the provided key.

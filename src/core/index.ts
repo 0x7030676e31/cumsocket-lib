@@ -1,4 +1,5 @@
 import Api, { ApiModules } from "../api/index.js";
+import DCClient from "../client/index.js";
 import DBStorage from "./dbstorage.js";
 import Socket from "./socket.js";
 import pg from "pg";
@@ -36,6 +37,8 @@ export default class Client extends Socket {
   private readonly _api: Api;
   // Database storage
   private readonly _storage?: DBStorage;
+  // Discord client storage
+  public readonly client: DCClient = new DCClient(this);
 
   /**
     Initializes a new connection with discord using the provided authorization token.
@@ -50,6 +53,7 @@ export default class Client extends Socket {
     // Register listeners
     this.once("ready", this.clientReady.bind(this));
     this.on("dispatch", async (d, t) => this.eventDispatcher(d, t));
+    this.on("dispatch", async (d, t) => this.client.dispatch(d, t));
 
     // Initialize postgres client
     if (!opt.postgres) return;
