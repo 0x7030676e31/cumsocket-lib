@@ -117,9 +117,9 @@ export default class Client extends Socket {
         if (allowSubDirs)
             files.filter(v => v.isDirectory()).forEach(v => fs.existsSync(`${path}/${v.name}/index.js`) && targets.push(`${path}/${v.name}/index.js`));
         // Load all modules
-        targets.forEach(async (v) => await this.loadModule(v, false));
+        targets.forEach(async (v) => await this.loadModule(v, false, true));
     }
-    async loadModule(target, relative = true) {
+    async loadModule(target, relative = true, ignoreOnFail = false) {
         const startStamp = Date.now();
         let obj = target;
         // If the target is a string, we need to import it
@@ -131,15 +131,15 @@ export default class Client extends Socket {
             var path = relative ? `${process.cwd()}/${target}` : target;
             // Check if the path exists
             if (!fs.existsSync(path))
-                error(`path ${path} does not exist.`);
+                return error(`path ${path} does not exist.`);
             // Import the module
             const module = await import(path);
             // Check if the module exports a default export
             if (!module.default)
-                error(`module at path ${path} does not export a default export.`);
+                return error(`module at path ${path} does not export a default export.`);
             obj = module.default;
             if (!this.isClass(obj))
-                error(`module at path ${path} does not export a class constructor.`);
+                return error(`module at path ${path} does not export a class constructor.`);
         }
         // Initialize the module
         const instance = new obj();
@@ -149,31 +149,31 @@ export default class Client extends Socket {
         // Check if the module contains a valid id
         const id = instance.id;
         if (id === undefined)
-            error(`module "${target.constructor.name}" does not contain an id;`);
+            return error(`module "${target.constructor.name}" does not contain an id;`);
         if (typeof id !== "string")
-            error(`module with id "${id}" has an invalid id type.`);
+            return error(`module with id "${id}" has an invalid id type.`);
         if (this.loadedModules.some(v => v.id === id))
-            error(`module with id "${id}" is already loaded.`);
+            return error(`module with id "${id}" is already loaded.`);
         if (!/[a-z_]{1,16}/i.test(id))
-            error(`module with id "${id}" has an invalid id structure.`);
+            return error(`module with id "${id}" has an invalid id structure.`);
         // Check if all required environment variables are set
         const env = instance.env;
         if (env instanceof Array) {
             // Check env array
             for (const key of env) {
                 if (process.env[key] === undefined)
-                    error(`module with id "${id}" requires environment variable "${key}" to be set.`);
+                    return error(`module with id "${id}" requires environment variable "${key}" to be set.`);
                 this._env[key] = process.env[key];
             }
         }
         else if (env) {
             if (typeof env !== "object")
-                error(`module with id "${id}" has an invalid environment variable list.`);
+                return error(`module with id "${id}" has an invalid environment variable list.`);
             // Check env object
             for (const [key, value] of Object.entries(env)) {
                 const envValue = process.env[key];
                 if (envValue === undefined)
-                    error(`module with id "${id}" requires environment variable "${key}" to be set.`);
+                    return error(`module with id "${id}" requires environment variable "${key}" to be set.`);
                 switch (value) {
                     // Check if the environment variable is a string
                     case "string":
@@ -183,13 +183,13 @@ export default class Client extends Socket {
                     case "number":
                         const num = envValue.replaceAll(/(?<=\d)_(?=\d)/g, "");
                         if (!/^\d+(\.\d+)?$/.test(num))
-                            error(`module with id "${id}" requires environment variable "${key}" to be a number.`);
+                            return error(`module with id "${id}" requires environment variable "${key}" to be a number.`);
                         this._env[key] = +num;
                         break;
                     // Check if the environment variable is a boolean
                     case "boolean":
                         if (!/^(true|false)$/i.test(envValue))
-                            error(`module with id "${id}" requires environment variable "${key}" to be a boolean.`);
+                            return error(`module with id "${id}" requires environment variable "${key}" to be a boolean.`);
                         this._env[key] = envValue.toLowerCase() === "true";
                         break;
                 }
@@ -217,7 +217,10 @@ export default class Client extends Socket {
         this.loadedModules.push(instance);
         // Log confirmation message
         this.log("Core", `Loaded module "${id}" with ${listeners.length} listeners. Took ${Date.now() - startStamp}ms.`);
+        // Function for throwing errors
         function error(message) {
+            if (ignoreOnFail)
+                return;
             throw new Error(`[Cumsocket] Failed to load module: ${message}`);
         }
     }

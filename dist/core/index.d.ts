@@ -56,7 +56,7 @@ export default class Client extends Socket {
       @param path The path to the module to load.
       @param relative If the path is relative to the current working directory.
     */
-    loadModule(path: string, relative: boolean): Promise<void>;
+    loadModule(path: string, relative?: boolean, ignoreOnFail?: boolean): Promise<void>;
     private isClass;
     /**
      * Returns the storage instance if the database is available.
