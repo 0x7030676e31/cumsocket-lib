@@ -1,5 +1,6 @@
 import Api from "../api/index.js";
 import DCClient from "../client/index.js";
+import DBStorage from "./dbstorage.js";
 import Socket from "./socket.js";
 import pg from "pg";
 import fs from "fs";
@@ -54,8 +55,9 @@ export default class Client extends Socket {
         if (!opt.postgres)
             return;
         this.postgres = new pg.Client({ connectionString: opt.postgres, ssl: { rejectUnauthorized: false } });
-        this.postgresPromise = this.postgres.connect();
-        this.log("Core", "Initialized postgres client.");
+        this.postgresPromise = this.postgres.connect().then(() => this.log("Core", "Connected to PostgreSQL database."));
+        // Initialize database storage
+        this._storage = new DBStorage(this);
     }
     /**
      * Call `ready` method on all modules when the client is entirely ready.
