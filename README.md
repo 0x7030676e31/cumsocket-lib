@@ -1,5 +1,13 @@
 # Cumsocket
-Cumsocket is a simple Discord selfbot library based on pure websocket and node-fetch. It's designed to use modules as event receivers, so you can easily create and register your modules.
+Cumsocket is a simple Discord selfbot library based on pure websocket and node-fetch. It's designed to use modules as event receivers to easily add own modules.
+
+## About / Worth Mentioning
+- Cumsocket is mainly designed for personal use but I made it public anyway.
+- Library is ES Module only and it should be used with TypeScript because of decorators.
+- It has a PostgreSQL built-in because I had to integrate it with heroku postgres.
+- Api wrapper is still in development has only a few parts of the api implemented.
+- It's designed to be safe but there is no `science` and `cookie` support yet.
+- Selfbotting is forbidden by Discord's TOS and you can get banned for it. Using it on your main account is not recommended.
 
 ## Installation
 ```bash
@@ -52,9 +60,6 @@ client.loadModule(class MyModule extends Module {
   }
 });
 ```
-
-## TODO SECTION
-- Common JS
+## TODO:
 - Documentation
 - More examples
-- ...
