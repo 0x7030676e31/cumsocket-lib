@@ -60,8 +60,10 @@ export default class Client extends Socket {
     // Initialize postgres client
     if (!opt.postgres) return;
     this.postgres = new pg.Client({ connectionString: opt.postgres, ssl: { rejectUnauthorized: false } });
-    this.postgresPromise = this.postgres.connect();
-    this.log("Core", "Initialized postgres client.");
+    this.postgresPromise = this.postgres.connect().then(() => this.log("Core", "Connected to PostgreSQL database."));
+
+    // Initialize database storage
+    this._storage = new DBStorage(this);
   }
 
   /**
