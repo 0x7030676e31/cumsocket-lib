@@ -11,6 +11,22 @@
   "scripts": {
     "build": "rm -rf dist && tsc && clear && echo 'Build complete!'"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/0x7030676e31/cumsocket-lib"
+  },
+  "keywords": [
+    "discord",
+    "selfbot",
+    "bot",
+    "cumsocket",
+    "cum",
+    "socket",
+    "typescript",
+    "ts",
+    "javascript",
+    "js"
+  ],
   "author": "0x7030676e31",
   "license": "ISC",
   "dependencies": {
