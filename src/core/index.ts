@@ -50,6 +50,8 @@ export default class Client extends Socket {
     super(opt.authorization, opt.logs ?? false);
     this._api = new Api(opt.authorization);
 
+    if (opt.autoReady) this.ready();
+
     // Register listeners
     this.once("ready", this.clientReady.bind(this));
     this.on("dispatch", async (d, t) => this.eventDispatcher(d, t));
@@ -320,7 +322,7 @@ export default class Client extends Socket {
 }
 
 export interface Module {
-  readonly env?: string[] | EnvObject;
+  readonly env?: string[] | EnvConfig;
   readonly ctx?: Client;
   readonly ignore?: boolean;
 
@@ -336,9 +338,10 @@ type ClientOptions = {
   authorization: string;
   logs?: boolean;
   postgres?: string;
+  autoReady?: boolean;
 }
 export type Listener = { id: string, callback: Reciver };
 export type Listeners = { [key: string]: Listener[] };
 type Reciver = (payload: any, event: string) => Promise<void> | void;
 type EnvType = string | number | boolean;
-export type EnvObject = { [key: string]: "string" | "number" | "boolean"; };
+export type EnvConfig = { [key: string]: "string" | "number" | "boolean"; };

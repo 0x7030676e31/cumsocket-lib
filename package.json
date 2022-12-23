@@ -22,5 +22,8 @@
     "@types/node-fetch": "^2.6.2",
     "@types/pg": "^8.6.5",
     "@types/ws": "^8.5.3"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

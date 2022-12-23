@@ -9,7 +9,7 @@ export default class Client {
     this.ctx = ctx;
   }
 
-  // Dispatches events from the gateway
+  // Dispatches events from the gatewayhttps://www.youtube.com/watch?v=Klsno7JkYuo
   public async dispatch(payload: any, event: string): Promise<void> {
     switch (event) {
       case "READY":

@@ -4,7 +4,7 @@ export default class Client {
     constructor(ctx) {
         this.ctx = ctx;
     }
-    // Dispatches events from the gateway
+    // Dispatches events from the gatewayhttps://www.youtube.com/watch?v=Klsno7JkYuo
     async dispatch(payload, event) {
         switch (event) {
             case "READY":

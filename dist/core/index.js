@@ -44,6 +44,8 @@ export default class Client extends Socket {
     constructor(opt) {
         super(opt.authorization, opt.logs ?? false);
         this._api = new Api(opt.authorization);
+        if (opt.autoReady)
+            this.ready();
         // Register listeners
         this.once("ready", this.clientReady.bind(this));
         this.on("dispatch", async (d, t) => this.eventDispatcher(d, t));

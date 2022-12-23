@@ -99,7 +99,7 @@ export default class Client extends Socket {
     dbQuery(query: string, ...args: any[]): Promise<pg.QueryResult | null>;
 }
 export interface Module {
-    readonly env?: string[] | EnvObject;
+    readonly env?: string[] | EnvConfig;
     readonly ctx?: Client;
     readonly ignore?: boolean;
     init?(ctx?: Client): Promise<void> | void;
@@ -112,6 +112,7 @@ type ClientOptions = {
     authorization: string;
     logs?: boolean;
     postgres?: string;
+    autoReady?: boolean;
 };
 export type Listener = {
     id: string;
@@ -122,7 +123,7 @@ export type Listeners = {
 };
 type Reciver = (payload: any, event: string) => Promise<void> | void;
 type EnvType = string | number | boolean;
-export type EnvObject = {
+export type EnvConfig = {
     [key: string]: "string" | "number" | "boolean";
 };
 export {};
