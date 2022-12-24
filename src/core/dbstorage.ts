@@ -25,22 +25,22 @@ export default class DBStorage {
   }
 
   // Set a value in the local cache and database
-  public async set(key: string, value: string): Promise<void> {
+  public async set(key: string, value: Value): Promise<void> {
     // Update database
     if (this.local.has(key)) this.ctx.dbQuery("UPDATE storage SET value = '$1' WHERE key = '$2';", value, key);
     else this.ctx.dbQuery("INSERT INTO storage (key, value) VALUES ('$1', '$2');", key, value);
 
     // Update local cache
-    this.local.set(key, value);
+    this.local.set(key, value.toString());
   }
 
   // Set a value in the local cache and database if it doesn't exist
-  public async setIfNotExists(key: string, value: string): Promise<void> {
+  public async setIfNotExists(key: string, value: Value): Promise<void> {
     if (!this.local.has(key)) await this.set(key, value);
   }
 
   // Set a value in the local cache and database if it's different
-  public async setIfDiff(key: string, value: string): Promise<void> {
+  public async setIfDiff(key: string, value: Value): Promise<void> {
     if (this.local.get(key) !== value) await this.set(key, value);
   }
 
@@ -153,3 +153,5 @@ export default class DBStorage {
     return str;
   }
 }
+
+type Value = string | number | boolean;

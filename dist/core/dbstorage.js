@@ -25,7 +25,7 @@ export default class DBStorage {
         else
             this.ctx.dbQuery("INSERT INTO storage (key, value) VALUES ('$1', '$2');", key, value);
         // Update local cache
-        this.local.set(key, value);
+        this.local.set(key, value.toString());
     }
     // Set a value in the local cache and database if it doesn't exist
     async setIfNotExists(key, value) {

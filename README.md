@@ -4,7 +4,7 @@ Cumsocket is a simple Discord selfbot library based on pure websocket and node-f
 ## About / Worth Mentioning
 - Cumsocket is mainly designed for personal use but I made it public anyway.
 - Library is ES Module only and it should be used with TypeScript because of decorators.
-- It has a PostgreSQL built-in because I had to integrate it with heroku postgres.
+- It has a PostgreSQL built-in because I had to integrate it with heroku postgres but it can be ignored.
 - Api wrapper is still in development has only a few parts of the api implemented.
 - It's designed to be safe but there is no `science` and `cookie` support yet.
 - Selfbotting is forbidden by Discord's TOS and you can get banned for it. Using it on your main account is not recommended.

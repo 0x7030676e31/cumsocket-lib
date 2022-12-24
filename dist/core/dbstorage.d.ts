@@ -5,9 +5,9 @@ export default class DBStorage {
     constructor(ctx: Core);
     sync(): Promise<void>;
     get(key: string): string | null;
-    set(key: string, value: string): Promise<void>;
-    setIfNotExists(key: string, value: string): Promise<void>;
-    setIfDiff(key: string, value: string): Promise<void>;
+    set(key: string, value: Value): Promise<void>;
+    setIfNotExists(key: string, value: Value): Promise<void>;
+    setIfDiff(key: string, value: Value): Promise<void>;
     has(key: string): boolean;
     delete(key: string): Promise<void>;
     numericIncr(key: string, value?: number): Promise<number>;
@@ -23,3 +23,5 @@ export default class DBStorage {
     stringAppend(key: string, value: string): Promise<string>;
     stringPrepend(key: string, value: string): Promise<string>;
 }
+type Value = string | number | boolean;
+export {};

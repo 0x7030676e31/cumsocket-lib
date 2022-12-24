@@ -190,17 +190,17 @@ export default class Client extends Socket {
     if (env instanceof Array) {
       // Check env array
       for (const key of env) {
-        if (process.env[key] === undefined) return error(`module with id "${id}" requires environment variable "${key}" to be set.`);
+        if (process.env[key] === undefined) return error(`module with id "${id}" requires environment variable "${key}" to be set.`, true);
         
         this._env[key] = process.env[key] as EnvType;
       }
     } else if (env) {
-      if (typeof env !== "object") return error(`module with id "${id}" has an invalid environment variable list.`);
+      if (typeof env !== "object") return error(`module with id "${id}" has an invalid environment variable list.`, true);
 
       // Check env object
       for (const [ key, value ] of Object.entries(env)) {
         const envValue = process.env[key];
-        if (envValue === undefined) return error(`module with id "${id}" requires environment variable "${key}" to be set.`);
+        if (envValue === undefined) return error(`module with id "${id}" requires environment variable "${key}" to be set.`, true);
         
         switch (value) {
           // Check if the environment variable is a string
@@ -211,13 +211,13 @@ export default class Client extends Socket {
           // Check if the environment variable is a number
           case "number":
             const num = envValue.replaceAll(/(?<=\d)_(?=\d)/g, "");
-            if (!/^\d+(\.\d+)?$/.test(num)) return error(`module with id "${id}" requires environment variable "${key}" to be a number.`);
+            if (!/^\d+(\.\d+)?$/.test(num)) return error(`module with id "${id}" requires environment variable "${key}" to be a number.`, true);
             this._env[key] = +num;
             break;
 
           // Check if the environment variable is a boolean
           case "boolean":
-            if (!/^(true|false)$/i.test(envValue)) return error(`module with id "${id}" requires environment variable "${key}" to be a boolean.`);
+            if (!/^(true|false)$/i.test(envValue)) return error(`module with id "${id}" requires environment variable "${key}" to be a boolean.`, true);
             this._env[key] = envValue.toLowerCase() === "true";
             break;
         }
@@ -251,8 +251,8 @@ export default class Client extends Socket {
     this.log("Core", `Loaded module "${id}" with ${listeners.length} listeners. Took ${Date.now() - startStamp}ms.`);
 
     // Function for throwing errors
-    function error(message: string): void | never {
-      if (ignoreOnFail) return;
+    function error(message: string, force: boolean = false): void | never {
+      if (ignoreOnFail && !force) return;
       throw new Error(`[Cumsocket] Failed to load module: ${message}`);
     }
   }
