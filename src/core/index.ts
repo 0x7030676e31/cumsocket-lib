@@ -321,7 +321,7 @@ export default class Client extends Socket {
   */
   public async dbQuery(query: string, ...args: any[]): Promise<pg.QueryResult | null> {
     if (!this.postgres) return null;
-    return await this.postgres.query(query.replaceAll(/\{\d+\}/g, (_, idx) => args[+idx - 1] ?? null));
+    return await this.postgres.query(query.replaceAll(/\$\d+/g, v => args[+v.slice(1) - 1] ?? null));
   }
 }
 

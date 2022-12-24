@@ -1,6 +1,6 @@
 {
   "name": "cumsocket",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Basic discord selfbot written in typescript with pure websocket",
   "type": "module",
   "main": "dist/index.js",
