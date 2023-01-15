@@ -58,7 +58,8 @@ class Socket extends EventEmitter {
     switch (op) {
       case OpCodes.DISPATCH:
         this._seq++;
-        this.emit("dispatch", d, t!);
+        this.
+        emit("dispatch", d, t!);
         
         if (t === "READY") {
           this._sessionId = d.session_id;
@@ -160,12 +161,18 @@ class Socket extends EventEmitter {
   }
 
 
-  // Get current sequence number
+  /**
+   * Get current session sequence
+   * @returns sequence number
+  */
   public get seq(): number {
     return this._seq;
   }
 
-  // Disconnect from the gateway and eventaully exit the process
+  /**
+   * Closeing socket with 1000 code
+   * @param reconnect if socket should establish a new connection
+  */
   public async disconnect(reconnect: boolean = false): Promise<void> {
     this.log("Gateway", "Disconnecting...");
     this._ws.close(1000);
@@ -174,25 +181,43 @@ class Socket extends EventEmitter {
   }
 
 
-  // Update the client's presence (op 3)
+  /**
+   * Updates the presence of the client
+   * @param presence new presence to display 
+  */
   public async presenceUpdate(presence: Presence): Promise<void> {
     this._ws.send(JSON.stringify({ op: OpCodes.PRESENCE_UPDATE, d: presence }));
   }
 
-  // Update user voice settings (op 4)
-  public async voiceStateUpdate(payload: VoiceState): Promise<void> {
-    this._ws.send(JSON.stringify({ op: 4, d: payload }));
+  /**
+   * Updates the voice status of the client
+   * @param state new voice state
+  */
+  public async voiceStateUpdate(state: VoiceState): Promise<void> {
+    this._ws.send(JSON.stringify({ op: 4, d: state }));
   }
 
-  // Confirm that user opened direct message channel, required to not get banned (op 13, undocumented)
+  /**
+   * Sends confirmation after opening new dm channel
+   * Used to avoid instant account suspension
+   * @param id id of the dm
+  */
   public async dmConfirmation(id: string): Promise<void> {
     this._ws.send(JSON.stringify({ op: OpCodes.DM_CONFIRMATION, d: { channel_id: id } }));
   }
   
+  /**
+   * Prints message to the console using uptime
+   * @param message message to display
+  */
   public log(message: string): void;
+  /**
+   * Prints message to the console using uptime and header
+   * @param header header used in log
+   * @param message message to display
+   */
   public log(header: string, message: string): void;
 
-  // Log a message to the console displaying the uptime
   public log(header: string, message?: string): void {
     log.print(this.id, message === undefined ? { message: header } : { header, message });
   }

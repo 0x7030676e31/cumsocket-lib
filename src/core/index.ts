@@ -33,6 +33,8 @@ export default class Client extends Socket {
   // If client recieved a ready event
   private _clientReady: boolean = false;
   private _userReady: ((value: void | PromiseLike<void>) => void) | null = null;
+  // Tasks to run before the client calls ready event
+  private readonly _readyTasks: Promise<void>[] = [];
   // Discord API wrapper
   private readonly _api: Api;
   // Database storage
@@ -60,7 +62,7 @@ export default class Client extends Socket {
     // Initialize postgres client
     if (!opt.postgres) return;
     this.postgres = new pg.Client({ connectionString: opt.postgres, ssl: { rejectUnauthorized: false } });
-    this.postgresPromise = this.postgres.connect().then(() => this.log("Core", "Connected to PostgreSQL database."));
+    this._readyTasks.push(this.postgres.connect().then(() => this.log("Core", "Connected to PostgreSQL database.")));
 
     // Initialize database storage
     this._storage = new DBStorage(this);
@@ -81,7 +83,7 @@ export default class Client extends Socket {
   private clientReady(): void {
     // Tasks to do
     Promise.all([
-      this.postgresPromise,
+      ...this._readyTasks,
       this._storage?.sync(),
     ]).then(() => {
       this._clientReady = true;
@@ -276,6 +278,14 @@ export default class Client extends Socket {
   */
   public get api(): ApiModules {
     return this._api.getApi();
+  }
+
+  /**
+   * Add a task to the on-ready queue.
+   * @param promise The promise to add to the queue.
+  */
+  public addReadyTask(promise: Promise<void>): void {
+    this._readyTasks.push(promise);
   }
 
   /**
